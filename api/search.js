@@ -35,7 +35,8 @@ export default async function handler(req, res) {
         sellAvg: `$${marketPrice.toFixed(2)}`,
         roi: `${roi}%`,
         trend: parseFloat(roi) > 0 ? 'up' : 'down',
-        image: card.images.small
+        image: card.images.small,
+        url: card.tcgplayer?.url || '#'
       };
     });
 

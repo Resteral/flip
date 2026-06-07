@@ -245,7 +245,7 @@ function App() {
                             {item.trend === 'up' ? <ArrowUpRight color="var(--success)" size={20} /> : <ArrowDownRight color="var(--danger)" size={20} />}
                           </td>
                           <td>
-                            <button className="btn-secondary" style={{padding: '0.25rem 0.75rem', fontSize: '0.85rem'}}>Analyze</button>
+                            <a href={item.url} target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{padding: '0.25rem 0.75rem', fontSize: '0.85rem'}}>Analyze on TCGPlayer</a>
                           </td>
                         </tr>
                       ))}
