@@ -2,12 +2,10 @@ import axios from 'axios';
 
 export default async function handler(req, res) {
   try {
-    // Fetch high value cards from a recent popular set (e.g. Pokemon 151 - sv3pt5)
-    // We order by market price descending to get the best flip targets.
+    // Fetch highest value cards across the entire Pokemon TCG API to find massive dollar-value margins
     const response = await axios.get('https://api.pokemontcg.io/v2/cards', {
       params: {
-        q: 'set.id:sv3pt5',
-        pageSize: 15,
+        pageSize: 50,
         orderBy: '-tcgplayer.prices.holofoil.market'
       }
     });
@@ -30,6 +28,8 @@ export default async function handler(req, res) {
         name: card.name,
         buyAvg: `$${lowPrice.toFixed(2)}`,
         sellAvg: `$${marketPrice.toFixed(2)}`,
+        profitAmount: profit,
+        profitDisplay: `+$${profit.toFixed(2)}`,
         roi: `${roi}%`,
         trend: parseFloat(roi) > 0 ? 'up' : 'down',
         image: card.images.small,
@@ -37,8 +37,8 @@ export default async function handler(req, res) {
       };
     });
 
-    // Only return cards with positive ROI data
-    const validFlips = flips.filter(f => parseFloat(f.roi) > 0).sort((a, b) => parseFloat(b.roi) - parseFloat(a.roi));
+    // Only return cards with positive ROI data, sorted by highest absolute dollar profit
+    const validFlips = flips.filter(f => f.profitAmount > 10).sort((a, b) => b.profitAmount - a.profitAmount).slice(0, 15);
 
     res.status(200).json(validFlips);
   } catch (error) {

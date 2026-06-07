@@ -223,6 +223,7 @@ function App() {
                         {activeTab === 'search' && <th>Set</th>}
                         <th>Lowest Listed</th>
                         <th>Market Value</th>
+                        <th>Est. Profit</th>
                         <th>Est. ROI</th>
                         <th>Trend</th>
                         <th>Action</th>
@@ -236,6 +237,7 @@ function App() {
                           {activeTab === 'search' && <td>{item.set}</td>}
                           <td>{item.buyAvg}</td>
                           <td style={{color: 'var(--success)', fontWeight: 600}}>{item.sellAvg}</td>
+                          <td style={{color: 'var(--success)', fontWeight: 700}}>{item.profitDisplay || 'N/A'}</td>
                           <td>
                             <span className={item.trend === 'up' ? 'trend-up' : 'trend-down'}>
                               {item.roi}

@@ -33,6 +33,8 @@ export default async function handler(req, res) {
         set: card.set.name,
         buyAvg: `$${lowPrice.toFixed(2)}`,
         sellAvg: `$${marketPrice.toFixed(2)}`,
+        profitAmount: profit,
+        profitDisplay: `+$${profit.toFixed(2)}`,
         roi: `${roi}%`,
         trend: parseFloat(roi) > 0 ? 'up' : 'down',
         image: card.images.small,
