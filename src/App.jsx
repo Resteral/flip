@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Search, Tag, Calendar, Zap, AlertTriangle, ArrowUpRight, ArrowDownRight, Package, MapPin, Loader2 } from 'lucide-react';
+import { LineChart, Search, Tag, Calendar, Zap, AlertTriangle, ArrowUpRight, ArrowDownRight, Package, MapPin, Loader2, X } from 'lucide-react';
 import './index.css';
 
 function App() {
@@ -8,11 +8,13 @@ function App() {
   const [drops, setDrops] = useState([]);
   const [deals, setDeals] = useState([]);
   const [flips, setFlips] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   
-  const [loading, setLoading] = useState({ drops: true, deals: true, flips: true });
+  const [loading, setLoading] = useState({ drops: true, deals: true, flips: true, search: false });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    // Fetch live data from our Vercel Serverless API routes
     fetch('/api/drops')
       .then(res => res.json())
       .then(data => { setDrops(Array.isArray(data) ? data : []); setLoading(l => ({ ...l, drops: false })); })
@@ -29,6 +31,26 @@ function App() {
       .catch(err => { console.error(err); setLoading(l => ({ ...l, flips: false })); });
   }, []);
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    
+    setIsSearching(true);
+    setActiveTab('search');
+    setLoading(l => ({ ...l, search: true }));
+    
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+      const data = await res.json();
+      setSearchResults(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+      setSearchResults([]);
+    } finally {
+      setLoading(l => ({ ...l, search: false }));
+    }
+  };
+
   return (
     <div className="app-container">
       <header className="header">
@@ -37,13 +59,13 @@ function App() {
           <span>ProfitFinder <span style={{color: 'var(--text-secondary)', fontSize: '1rem'}}>Live Data</span></span>
         </div>
         <nav className="nav-links">
-          <button className={`nav-link ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
+          <button className={`nav-link ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => {setActiveTab('dashboard'); setIsSearching(false);}}>
             Dashboard
           </button>
-          <button className={`nav-link ${activeTab === 'deals' ? 'active' : ''}`} onClick={() => setActiveTab('deals')}>
+          <button className={`nav-link ${activeTab === 'deals' ? 'active' : ''}`} onClick={() => {setActiveTab('deals'); setIsSearching(false);}}>
             Local Deals
           </button>
-          <button className={`nav-link ${activeTab === 'flips' ? 'active' : ''}`} onClick={() => setActiveTab('flips')}>
+          <button className={`nav-link ${activeTab === 'flips' ? 'active' : ''}`} onClick={() => {setActiveTab('flips'); setIsSearching(false);}}>
             Flipping Hub
           </button>
         </nav>
@@ -52,9 +74,18 @@ function App() {
             <MapPin size={18} />
             <span style={{fontSize: '0.9rem', fontWeight: 500}}>Effingham, NH 03882</span>
           </div>
-          <button className="btn-primary">
-            <Search size={18} /> Search Cards
-          </button>
+          <form onSubmit={handleSearch} style={{display: 'flex', alignItems: 'center', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '8px', padding: '0.25rem 0.5rem'}}>
+            <input 
+              type="text" 
+              placeholder="Search cards..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{background: 'transparent', border: 'none', color: 'white', padding: '0.5rem', outline: 'none'}}
+            />
+            <button type="submit" style={{color: 'var(--accent-color)', padding: '0.5rem'}}>
+              <Search size={18} />
+            </button>
+          </form>
         </div>
       </header>
 
@@ -64,11 +95,13 @@ function App() {
             {activeTab === 'dashboard' && 'Live Market Overview'}
             {activeTab === 'deals' && 'Real Local Deals'}
             {activeTab === 'flips' && 'Live TCG Flipping Opportunities'}
+            {activeTab === 'search' && `Search Results: "${searchQuery}"`}
           </h1>
           <p className="page-subtitle">
             {activeTab === 'dashboard' && 'Real-time analysis of TCG flips and local Craigslist finds.'}
             {activeTab === 'deals' && 'Live feed of underpriced items near you.'}
             {activeTab === 'flips' && 'Live market vs low price comparison from Pokémon TCG API.'}
+            {activeTab === 'search' && 'Live price data and flip margins for your searched cards.'}
           </p>
         </div>
 
@@ -156,18 +189,22 @@ function App() {
           </>
         )}
 
-        {activeTab === 'flips' && (
+        {(activeTab === 'flips' || activeTab === 'search') && (
           <div className="glass-card animate-fade-in delay-100">
              <div className="section-header">
-                <h2 className="section-title"><LineChart className="logo-icon" size={24} /> Trending Pokémon 151 Flips</h2>
+                <h2 className="section-title"><LineChart className="logo-icon" size={24} /> {activeTab === 'search' ? 'Search Results' : 'Trending Pokémon 151 Flips'}</h2>
+                {activeTab === 'search' && (
+                  <button className="btn-secondary" onClick={() => {setActiveTab('dashboard'); setSearchQuery('');}}><X size={16}/> Clear Search</button>
+                )}
              </div>
              <div className="table-container">
-                {loading.flips ? <Loader2 className="animate-spin" style={{margin: '2rem auto', display: 'block'}} /> : (
+                {(activeTab === 'search' ? loading.search : loading.flips) ? <Loader2 className="animate-spin" style={{margin: '2rem auto', display: 'block'}} /> : (
                   <table className="data-table">
                     <thead>
                       <tr>
                         <th>Card Image</th>
                         <th>Card Name</th>
+                        {activeTab === 'search' && <th>Set</th>}
                         <th>Lowest Listed</th>
                         <th>Market Value</th>
                         <th>Est. ROI</th>
@@ -176,25 +213,31 @@ function App() {
                       </tr>
                     </thead>
                     <tbody>
-                      {flips.map(flip => (
-                        <tr key={flip.id}>
-                          <td><img src={flip.image} alt={flip.name} style={{height: '60px', borderRadius: '4px'}} /></td>
-                          <td style={{fontWeight: 600}}>{flip.name}</td>
-                          <td>{flip.buyAvg}</td>
-                          <td style={{color: 'var(--success)', fontWeight: 600}}>{flip.sellAvg}</td>
+                      {(activeTab === 'search' ? searchResults : flips).map(item => (
+                        <tr key={item.id}>
+                          <td><img src={item.image} alt={item.name} style={{height: '60px', borderRadius: '4px'}} /></td>
+                          <td style={{fontWeight: 600}}>{item.name}</td>
+                          {activeTab === 'search' && <td>{item.set}</td>}
+                          <td>{item.buyAvg}</td>
+                          <td style={{color: 'var(--success)', fontWeight: 600}}>{item.sellAvg}</td>
                           <td>
-                            <span className={flip.trend === 'up' ? 'trend-up' : 'trend-down'}>
-                              {flip.roi}
+                            <span className={item.trend === 'up' ? 'trend-up' : 'trend-down'}>
+                              {item.roi}
                             </span>
                           </td>
                           <td>
-                            {flip.trend === 'up' ? <ArrowUpRight color="var(--success)" size={20} /> : <ArrowDownRight color="var(--danger)" size={20} />}
+                            {item.trend === 'up' ? <ArrowUpRight color="var(--success)" size={20} /> : <ArrowDownRight color="var(--danger)" size={20} />}
                           </td>
                           <td>
                             <button className="btn-secondary" style={{padding: '0.25rem 0.75rem', fontSize: '0.85rem'}}>Analyze</button>
                           </td>
                         </tr>
                       ))}
+                      {(activeTab === 'search' && searchResults.length === 0) && (
+                        <tr>
+                          <td colSpan="8" style={{textAlign: 'center', padding: '2rem'}}>No cards found for this search query.</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 )}
