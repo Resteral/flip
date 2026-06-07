@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LineChart, Search, Tag, TrendingUp, Calendar, Zap, AlertTriangle, ArrowUpRight, ArrowDownRight, Package } from 'lucide-react';
+import { LineChart, Search, Tag, TrendingUp, Calendar, Zap, AlertTriangle, ArrowUpRight, ArrowDownRight, Package, MapPin } from 'lucide-react';
 import './index.css';
 
 const mockDrops = [
@@ -9,9 +9,9 @@ const mockDrops = [
 ];
 
 const mockDeals = [
-  { id: 1, name: 'Charizard ex 199/165 (SAR)', location: 'Facebook Marketplace - 5 mi', price: '$85.00', retail: '$120.00', condition: 'NM' },
-  { id: 2, name: 'Lorcana The First Chapter Booster Box', location: 'Local Comic Shop - 12 mi', price: '$130.00', retail: '$180.00', condition: 'Sealed' },
-  { id: 3, name: 'Topps Chrome Baseball 2023 Blaster', location: 'Target Clearance - 2 mi', price: '$17.49', retail: '$34.99', condition: 'Sealed' },
+  { id: 1, name: 'Charizard ex 199/165 (SAR)', location: 'Effingham Falls Swap (2 mi)', price: '$85.00', retail: '$120.00', condition: 'NM' },
+  { id: 2, name: 'Lorcana The First Chapter Booster Box', location: 'Center Effingham Yard Sale', price: '$130.00', retail: '$180.00', condition: 'Sealed' },
+  { id: 3, name: 'Topps Chrome Baseball 2023 Blaster', location: 'Local FB Group - South Effingham', price: '$17.49', retail: '$34.99', condition: 'Sealed' },
 ];
 
 const mockFlips = [
@@ -42,7 +42,11 @@ function App() {
             Flipping Hub
           </button>
         </nav>
-        <div className="user-actions">
+        <div className="user-actions" style={{display: 'flex', alignItems: 'center', gap: '1.5rem'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)'}}>
+            <MapPin size={18} />
+            <span style={{fontSize: '0.9rem', fontWeight: 500}}>Effingham, NH 03882</span>
+          </div>
           <button className="btn-primary">
             <Search size={18} /> Search Cards
           </button>
