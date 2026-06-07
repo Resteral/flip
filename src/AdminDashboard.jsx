@@ -44,9 +44,35 @@ function AdminDashboard() {
     }
   };
 
-  const handlePushToStore = (item) => {
-    // This is where Shopify Admin API logic will go
-    alert(`Pushed "${item.name}" to Shopify Inventory. This will automatically sync to Amazon via Marketplace Connect!`);
+  const handlePushToStore = async (item) => {
+    try {
+      const priceString = item.sellAvg.replace('$', '').replace(',', '');
+      
+      const res = await fetch('/api/shopify-list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: item.name,
+          description: `<p>Condition: Mint/Near Mint. ${item.set ? `Set: ${item.set}` : ''}</p>`,
+          price: priceString,
+          image: item.image,
+          tags: `tcg, ${item.trend}`
+        }),
+      });
+
+      const data = await res.json();
+      
+      if (res.ok) {
+        alert(`Successfully pushed "${item.name}" to Shopify Inventory! ID: ${data.product.id}\nMarketplace Connect will now sync this to Amazon.`);
+      } else {
+        alert(`Failed to push to Shopify: ${JSON.stringify(data.details)}.\nMake sure your SHOPIFY_STORE_DOMAIN is set in Vercel!`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error connecting to Shopify API serverless function.');
+    }
   };
 
   return (
