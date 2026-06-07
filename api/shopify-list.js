@@ -7,8 +7,8 @@ export default async function handler(req, res) {
 
   // Security best practice: Never hardcode your API keys in a public GitHub repo!
   // These should be configured in your Vercel Project Settings > Environment Variables
-  const SHOPIFY_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || 'your-store.myshopify.com';
-  const SHOPIFY_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN || '758160bce983e0f1666363b177d2b372';
+  const SHOPIFY_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || 'product-place-9698.myshopify.com';
+  const SHOPIFY_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN;
 
   const { title, description, price, tags, vendor, image } = req.body;
 
