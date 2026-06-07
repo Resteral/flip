@@ -9,8 +9,8 @@ export default async function handler(req, res) {
       }
     });
 
-    // Fetch the Slickdeals Frontpage RSS feed for verified retail store deals
-    const feed = await parser.parseURL('https://slickdeals.net/newsearch.php?mode=frontpage&searcharea=deals&searchin=first&rss=1');
+    // Fetch the Slickdeals RSS feed specifically searching for "80% off" or "90% off" massive clearance
+    const feed = await parser.parseURL('https://slickdeals.net/newsearch.php?q=80%25+off+OR+90%25+off&searcharea=deals&searchin=first&rss=1');
     
     const deals = feed.items.slice(0, 15).map((item, index) => {
       // Extract store name from title, typically looks like "Item Name @ Store Name - $Price"
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
         name: item.title,
         location: store,
         price: price,
-        retail: 'Clearance/Sale',
+        retail: '80-90% OFF SALE',
         condition: 'New',
         link: item.link
       };

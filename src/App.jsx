@@ -266,7 +266,7 @@ function App() {
         {activeTab === 'deals' && (
            <div className="glass-card animate-fade-in delay-100">
              <div className="section-header">
-                <h2 className="section-title"><Store className="logo-icon" size={24} /> Live Retail Deals (Slickdeals)</h2>
+                <h2 className="section-title"><Store className="logo-icon" size={24} /> Live Retail Deals (80-90% Off Alerts)</h2>
              </div>
              <div className="items-list" style={{marginBottom: '2rem'}}>
                 {loading.store ? <Loader2 className="animate-spin" style={{margin: '2rem auto', display: 'block'}} /> : storeDeals.map(deal => (
@@ -284,7 +284,8 @@ function App() {
                     </div>
                     <div className="item-actions">
                       <div className="price-tag">{deal.price}</div>
-                      <a href={deal.link} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{padding: '0.25rem 0.75rem', fontSize: '0.8rem', marginTop: '0.5rem'}}>View Deal</a>
+                      <span className="badge badge-danger" style={{marginTop: '0.25rem', marginBottom: '0.25rem'}}>80-90% OFF</span>
+                      <a href={deal.link} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{padding: '0.25rem 0.75rem', fontSize: '0.8rem', marginTop: '0.25rem'}}>View Deal</a>
                     </div>
                   </div>
                 ))}
