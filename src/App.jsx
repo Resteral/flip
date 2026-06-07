@@ -15,17 +15,17 @@ function App() {
     // Fetch live data from our Vercel Serverless API routes
     fetch('/api/drops')
       .then(res => res.json())
-      .then(data => { setDrops(data); setLoading(l => ({ ...l, drops: false })); })
+      .then(data => { setDrops(Array.isArray(data) ? data : []); setLoading(l => ({ ...l, drops: false })); })
       .catch(err => { console.error(err); setLoading(l => ({ ...l, drops: false })); });
 
     fetch('/api/deals')
       .then(res => res.json())
-      .then(data => { setDeals(data); setLoading(l => ({ ...l, deals: false })); })
+      .then(data => { setDeals(Array.isArray(data) ? data : []); setLoading(l => ({ ...l, deals: false })); })
       .catch(err => { console.error(err); setLoading(l => ({ ...l, deals: false })); });
 
     fetch('/api/flips')
       .then(res => res.json())
-      .then(data => { setFlips(data); setLoading(l => ({ ...l, flips: false })); })
+      .then(data => { setFlips(Array.isArray(data) ? data : []); setLoading(l => ({ ...l, flips: false })); })
       .catch(err => { console.error(err); setLoading(l => ({ ...l, flips: false })); });
   }, []);
 

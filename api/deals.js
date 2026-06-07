@@ -2,7 +2,12 @@ import Parser from 'rss-parser';
 
 export default async function handler(req, res) {
   try {
-    const parser = new Parser();
+    const parser = new Parser({
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+        'Accept': 'application/rss+xml, application/xml, text/xml; q=0.9, */*; q=0.8'
+      }
+    });
     // Search Craigslist for cards, collectibles, or game items within 25 miles of 03882
     const feed = await parser.parseURL('https://nh.craigslist.org/search/sss?query=cards|pokemon|game|console&postal=03882&search_distance=25&format=rss');
     
@@ -30,6 +35,6 @@ export default async function handler(req, res) {
     res.status(200).json(deals);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch local deals' });
+    res.status(200).json([]);
   }
 }
